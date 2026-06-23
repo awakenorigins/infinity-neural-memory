@@ -1,0 +1,26 @@
+title = "infinity-neural-memory gitleaks config"
+
+# The repo intentionally contains FAKE placeholder secrets/PII as TEST FIXTURES to prove the
+# redactor / PII scrubber / admission gate actually block them. These are allowlisted below.
+# No real credentials are committed (verified by a full-tree sweep at build time).
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Synthetic test/demo fixtures (fake secrets & PII used to exercise redaction)."
+paths = [
+  '''tests/.*\.py''',
+  '''examples/.*\.py''',
+  '''seed/sample/.*\.md''',
+  '''VERIFY\.py''',
+  '''scripts/seed_import\.py''',
+]
+regexes = [
+  '''sk-abcdefghijklmnopqrstuvwx''',
+  '''sk-FAKE-EXAMPLE-KEY''',
+  '''ghp_0123456789abcdefghijklmnopqrstuvwx''',
+  '''000000000:FAKE-EXAMPLE-BOT-TOKEN''',
+  '''(john\.doe|demo\.user)@gmail\.com''',
+  '''C:\\Users\\(demouser|nacha|x)''',
+]

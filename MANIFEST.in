@@ -1,0 +1,16 @@
+include README.md LICENSE NOTICE.md CHANGELOG.md SECURITY.md CONTRIBUTING.md CODE_OF_CONDUCT.md CITATION.cff
+include SKILL.md INSTINCT-PROTOCOL.md SYNC-PROTOCOL.md SESSION-LOGGER.md AGENTS-BLOCK.md
+include VERIFY.py pyproject.toml MANIFEST.in
+include inmem/py.typed
+recursive-include LICENSES *
+recursive-include references *.md
+recursive-include docs *.md
+recursive-include examples *.py
+recursive-include scripts *.py
+recursive-include tests *.py
+recursive-include seed *.md *.json
+recursive-include .github *
+global-exclude __pycache__/* *.pyc
+prune dist
+prune build
+prune seed/private

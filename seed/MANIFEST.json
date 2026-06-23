@@ -1,0 +1,21 @@
+{
+  "kind": "synthetic-sample",
+  "note": "Demo only. Not real personal data.",
+  "files": [
+    {
+      "name": "leak-demo.md",
+      "bytes": 187,
+      "sha256": "4ad9206bb44a7b8475bf15cb75bc78b6701a0d5cb7bf5167f2c3ab18f30acc16"
+    },
+    {
+      "name": "persona-demo.md",
+      "bytes": 296,
+      "sha256": "0c47f330414f68a9471c875161f19e86e880637a067c7d1182c02fa75e34831a"
+    },
+    {
+      "name": "workflow-demo.md",
+      "bytes": 291,
+      "sha256": "1a3c1b9dfd0faa14ee0e84b773d890b2800dd59f1d357eec7be7800e14a1f43e"
+    }
+  ]
+}
