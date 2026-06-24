@@ -78,11 +78,15 @@ class RememberResult:
 
 class Brain:
     def __init__(self, db_path: str = ":memory:", timeline_dir: str = "./timeline",
-                 use_vector: bool = True) -> None:
+                 use_vector: bool = True, embedder=None, eager_embed: bool = False) -> None:
         self.store = MemoryStore(db_path)
         self.redactor = Redactor()
         self.timeline = Timeline(timeline_dir, redactor=self.redactor)
-        self.embedder = HashingEmbedder() if use_vector else None
+        self.eager_embed = eager_embed
+        if embedder is not None:
+            self.embedder = embedder
+        else:
+            self.embedder = HashingEmbedder() if use_vector else None
         self.gate = AdmissionGate(embedder=self.embedder)
         self.preaction = PreActionGate(embedder=self.embedder)
         self.inject_gate = InjectionGate()
@@ -103,6 +107,12 @@ class Brain:
             source_event_id=source_event_id,
             supersedes=verdict.duplicate_of if verdict.action == "supersede" else None,
         )
+        if self.embedder is not None and self.eager_embed:  # default: lazy-fill at recall time
+            try:
+                self.store.set_embedding(mem_id, self.embedder.embed(normalize(red.clean)),
+                                         self.embedder.sig)
+            except Exception:
+                pass
         return RememberResult(memory_id=mem_id, admission=verdict)
 
     def recall(self, query: str, *, top_k: int = 5, scope: str | None = None) -> list[Hit]:
