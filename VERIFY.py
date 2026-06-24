@@ -27,7 +27,7 @@ def _checks() -> list[tuple[str, bool]]:
     def chk(name, cond):
         results.append((name, bool(cond)))
 
-    chk("package version is 1.1.0", __version__ == "1.1.0")
+    chk("package version is 1.2.0", __version__ == "1.2.0")
 
     # redaction
     r = Redactor().redact("password: hunter2xy key sk-abcdefghijklmnopqrstuvwx")
@@ -141,6 +141,18 @@ def _checks() -> list[tuple[str, bool]]:
         from inmem.embedding import HashingEmbedder as _HE, OpenAIEmbedder as _OE
         chk("embedders expose distinct cache signatures",
             _HE(dim=128).sig == "hashing:128" and "embedding" in _OE(api_key="x").sig)
+
+        # --- Permanence: nothing is auto-deleted; only explicit forget removes ---
+        pid = b.remember("permanent test fact about owls", category="fact").memory_id
+        c1 = b.remember("a contradicting fact about owls instead", category="fact").memory_id
+        chk("supersession/decay never delete (memory retained)", b.store.get(pid) is not None)
+        n_before = len(b.timeline.read())
+        forgotten = b.forget(pid, reason="verify right-to-forget", actor="verify")
+        chk("explicit forget permanently removes the memory",
+            forgotten and b.store.get(pid) is None)
+        chk("forget is logged to the append-only timeline (auditable erasure)",
+            any(e.get("type") == "forget" and e.get("mem_id") == pid for e in b.timeline.read()))
+        chk("a non-forgotten memory still survives", b.store.get(c1) is not None)
 
     return results
 
