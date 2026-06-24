@@ -19,13 +19,13 @@ description: >
 > **CODE** = enforced by Python with tests. **PROTOCOL** = behavior the agent follows.
 > Nothing in CODE references a phantom API; nothing in PROTOCOL claims to be enforced.
 
-## ✅ CODE layer (runs, tested: `python VERIFY.py` → 26/26, `pytest` → 47)
+## ✅ CODE layer (runs, tested: `python VERIFY.py` → 31/31, `pytest` → 58)
 
 | Capability | Entry point | Guarantee |
 |---|---|---|
 | Append-only timeline | `Timeline.append/read` | redacted on write, file-locked, one file/day |
 | Memory store | `MemoryStore` | provenance + temporal validity + supersession |
-| Hybrid recall | `hybrid_search` / `Brain.recall` | BM25 + optional vector, RRF fused |
+| Hybrid recall | `hybrid_search` / `Brain.recall` | FTS5 candidates → vector rerank → RRF; embedding cache; pluggable embedder |
 | **Write-side gate** | `AdmissionGate.evaluate` | what to WRITE: dedupe (Jaccard) / sensitive / confidence |
 | **Inject-side gate** | `InjectionGate` / `Brain.recall_for_context` | what to SHOW the model: relevance + freshness + sensitive + superseded |
 | Risk check | `PreActionGate.judge` | warns on past failures / rules / fragility |
