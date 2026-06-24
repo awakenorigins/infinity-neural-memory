@@ -156,6 +156,21 @@ class Brain:
     def pre_action(self, action: str, target: str = "", *, scope: str = "global") -> PreActionVerdict:
         return self.preaction.judge(self.store, action, target, scope=scope)
 
+    def forget(self, mem_id: str, *, reason: str = "", actor: str = "human") -> bool:
+        """Deliberate erasure — the ONLY way a memory ever leaves Infinity Neural Memory.
+
+        Removes the memory permanently AND appends a `forget` tombstone to the append-only
+        timeline, so the *act* of forgetting is itself on the record (who, when, why) even though
+        the content is gone. Decay / supersession / time never trigger this; a human (or an
+        explicit instruction) must call it. Use it for right-to-forget or to purge a leaked secret.
+        """
+        existed = self.store.get(mem_id) is not None
+        deleted = self.store.forget(mem_id, reason=reason)
+        if existed:
+            self.timeline.append({"type": "forget", "mem_id": mem_id,
+                                  "reason": reason, "actor": actor})  # no content: it is erased
+        return deleted
+
     def digest(self, date_str: str | None = None) -> dict:
         return compute_digest(self.timeline, self.store, date_str)
 
