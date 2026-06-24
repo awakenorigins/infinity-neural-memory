@@ -1,19 +1,20 @@
-# Proof of run — Tue Jun 23 17:47:30 UTC 2026 | Infinity Neural Memory V1.0.1 (patched)
+# Proof of run — Tue Jun 23 21:09:54 UTC 2026 | Infinity Neural Memory v1.1.0
 
 ## python VERIFY.py
 ========================================================
-Result: 26/26 checks passed
+Result: 31/31 checks passed
 VERDICT: ✅ ALL PASS — Infinity Neural Memory V1
 
-## pytest tests/  (runs without PYTHONPATH thanks to pythonpath config)
-47 passed in 0.10s
+## pytest tests/
+..........................................................               [100%]
 
-## P0 fixes proof
- quoted pw : 'password="[REDACTED:secret]"'
- url cred  : 'DATABASE_URL=postgres://[REDACTED:credential]@host/db'
- supersede?: insert | active: 2 (expect insert / 2)
+## V1.1 retrieval benchmark (5,000 memories)
+  bulk insert 5000:        0.29s   (old in-memory ~1.33s)
+  warm hybrid query:       23.5 ms/query  (old ~1960 ms -> ~84x)
+  FTS enabled: True | embeddings cached (only retrieved): 3847/5000
 
-## fresh-install 1.0.1 wheel -> VERIFY + pytest (self-contained)
-Result: 26/26 checks passed
+## fresh-install 1.1.0 wheel -> VERIFY + pytest (self-contained)
+  installed: 1.1.0
+Result: 31/31 checks passed
 VERDICT: ✅ ALL PASS — Infinity Neural Memory V1
-...............................................                          [100%]
+..........................................................               [100%]
