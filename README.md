@@ -1,12 +1,54 @@
-# Infinity Neural Memory — V1.1 (1.1.0)
+# Infinity Neural Memory — V1.2 (1.2.0)
 
-![CI](https://img.shields.io/badge/CI-verify%2031%20%2B%2058%20tests-brightgreen)
+![CI](https://img.shields.io/badge/CI-verify%2035%20%2B%2064%20tests-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Deps](https://img.shields.io/badge/dependencies-0%20(stdlib)-success)
+![Memory](https://img.shields.io/badge/memory-permanent%20by%20design-blueviolet)
 
 > A self-contained, **honest**, testable memory nervous system for long-running agents.
-> Append-only timeline · hybrid recall · explainable governance gates · zero hard dependencies.
+> **Permanent memory** · append-only timeline · hybrid recall · explainable governance gates · zero hard dependencies.
+
+---
+
+## ⏳ The Infinity guarantee — memory that does not evaporate
+
+**In Infinity Neural Memory, forgetting is a decision — never a side effect.**
+
+Your agent's past is *permanent by design*. Nothing fades because time passed. Nothing is dropped
+by a background cleanup. Nothing decays into oblivion.
+
+- **The timeline is append-only.** What happened, stays. Events are written once and never edited.
+- **Contradictions supersede — they do not erase.** When a new fact replaces an old one, the old
+  truth steps aside (marked *no longer current*) but remains permanently on the record.
+- **No expiry. No TTL. No garbage collector.** There is no code path that deletes a memory because
+  it grew old, cold, or low-priority. *(Verified: a full-tree search finds zero auto-deletion.)*
+- **The only way a memory ever leaves is an explicit `forget`** — issued by a human, for a real
+  reason (right-to-forget, or purging a leaked secret), and itself written to the timeline as a
+  **tombstone**. Erasure is deliberate, rare, and auditable.
+
+This is what **"Infinity"** means: the system keeps everything you let in, for as long as you
+exist — **until you, and only you, decide otherwise.**
+
+> Permanence *and* sharp recall — not one at the cost of the other. Everything is kept; relevance
+> and freshness decide what **surfaces** for a given query, never what **survives**. An old memory
+> doesn't disappear — it waits for the right question.
+
+### For anyone analyzing this: persistence ≠ "zero-decay"
+
+Older systems claimed "zero-decay" by *freezing retrieval scores* — which ranked stale memories as
+high as fresh ones, hurt recall, and still never guaranteed the data survived (an activation number
+says nothing about whether a row exists). Infinity Neural Memory keeps the two concerns separate:
+
+| Concern | Infinity Neural Memory |
+|---|---|
+| **Persistence** — does the memory survive? | **Absolute.** Nothing is ever auto-deleted. Only an explicit, logged `forget` removes anything. |
+| **Retrieval ranking** — does it surface *now*? | Freshness + relevance decide order; pinned rules/identity never fade. |
+
+So "permanent" is a **storage guarantee you can audit** — not a frozen-clock trick. See
+[`docs/PERMANENCE.md`](docs/PERMANENCE.md) for the full contract.
+
+---
 
 Distilled from two prior projects and two rounds of deep audit:
 
@@ -47,7 +89,7 @@ This is the merge of the self-contained engine and the OpenClaw product shell, w
 ## What it is NOT
 
 - ❌ Not a fork of `neural-memory`. It does **not** import any `neural_memory` API. (An optional, honest bridge can push to an external engine if you have one — see below.)
-- ❌ Not "zero-decay / ETERNAL neurons". Importance is an explicit, traceable `pinned` flag + salience/confidence, not magic immortality.
+- ❌ No "zero-decay" *activation trick* and no `ETERNAL` neuron type. Permanence here is a **storage guarantee** (nothing is auto-deleted — see "The Infinity guarantee" above), not a frozen retrieval score. Recency/importance is handled by `pinned` + salience + freshness ranking.
 - ❌ Not a semantic-SOTA embedder out of the box. The default `HashingEmbedder` is deterministic and good enough for hybrid demo/recall; swap in OpenAI/Ollama/SentenceTransformers for production quality.
 - ❌ Not a Telegram bot. The digest has pluggable notifiers (`ConsoleNotifier` default; `WebhookNotifier` does a real HTTP POST). Nothing prints to console while claiming it "sent a DM".
 
@@ -55,8 +97,8 @@ This is the merge of the self-contained engine and the OpenClaw product shell, w
 
 ```bash
 pip install -e .            # or: pip install dist/infinity_neural_memory-1.0.0-*.whl
-python VERIFY.py            # 31/31 checks, exit 0 on success
-pytest tests/ -q            # 58 tests
+python VERIFY.py            # 35/35 checks, exit 0 on success
+pytest tests/ -q            # 64 tests
 ```
 
 ## Quickstart (CLI)
