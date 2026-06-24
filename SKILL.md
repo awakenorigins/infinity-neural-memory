@@ -2,7 +2,7 @@
 name: infinity-neural-memory
 version: 1.0.0
 description: >
-  Infinity Neural Memory V1 — honest memory nervous system for agents.
+  Infinity Neural Memory — PERMANENT, honest memory nervous system for agents (nothing is ever auto-forgotten).
   Append-only timeline (ground truth) + SQLite projection with provenance +
   hybrid BM25/vector recall (RRF) + governance gates (admission + pre-action) +
   secret redaction + Vietnamese NLP. Self-contained Python, zero hard deps, fully tested.
@@ -19,7 +19,7 @@ description: >
 > **CODE** = enforced by Python with tests. **PROTOCOL** = behavior the agent follows.
 > Nothing in CODE references a phantom API; nothing in PROTOCOL claims to be enforced.
 
-## ✅ CODE layer (runs, tested: `python VERIFY.py` → 31/31, `pytest` → 58)
+## ✅ CODE layer (runs, tested: `python VERIFY.py` → 35/35, `pytest` → 64)
 
 | Capability | Entry point | Guarantee |
 |---|---|---|
@@ -36,6 +36,8 @@ description: >
 | Vietnamese NLP | `inmem.vietnamese` | tone fold + compound tokens |
 | Digest | `compute_digest` + notifiers | real counts; honest delivery (Console/Webhook) |
 | External engine | `bridge.SubprocessBridge` (→ `nmem`) | reports true mode; DryRun by default |
+| **Permanent storage** | timeline + `MemoryStore` | nothing is auto-deleted: append-only + non-destructive supersession + no expiry |
+| **Deliberate forget** | `Brain.forget` / `inmem forget` | the ONLY deletion path; logs a timeline tombstone (right-to-forget / secret purge) |
 
 ## ⚠️ PROTOCOL layer (agent behavior — not code-enforced)
 
@@ -81,4 +83,5 @@ python VERIFY.py        # exit 0 == all real features pass
 - Never persist a raw secret. (Redactor + AdmissionGate enforce this; don't bypass them.)
 - Never edit or delete timeline events. They are immutable ground truth.
 - Never claim an external sync happened unless the bridge reports `written > 0`.
-- Importance is `pinned` + salience, explicit and visible — there is no "eternal" memory.
+- Memory is PERMANENT by design: never auto-delete, never expire, never decay-to-deletion. The ONLY way to remove a memory is an explicit `forget` (logged to the timeline) for right-to-forget or secret purge.
+- Importance/recency is `pinned` + salience + freshness ranking — permanence is a separate storage guarantee, not a frozen retrieval score.
