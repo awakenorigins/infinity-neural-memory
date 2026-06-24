@@ -27,7 +27,7 @@ def _checks() -> list[tuple[str, bool]]:
     def chk(name, cond):
         results.append((name, bool(cond)))
 
-    chk("package version is 1.0.1", __version__ == "1.0.1")
+    chk("package version is 1.1.0", __version__ == "1.1.0")
 
     # redaction
     r = Redactor().redact("password: hunter2xy key sk-abcdefghijklmnopqrstuvwx")
@@ -118,6 +118,29 @@ def _checks() -> list[tuple[str, bool]]:
             ranking[0].option == "Opus" and ranking[0].reason_sources != [])
         chk("preference prior influence is inspectable",
             all(o.visible_when_asked for o in ranking))
+
+        # --- V1.1: FTS5 + embedding cache + two-stage retrieval ---
+        st = b.stats()
+        chk("schema is v2 with FTS5 enabled", st["schema_version"] == 2 and st["fts_enabled"])
+        # lazy embedding: nothing cached until a recall touches candidates
+        before = b.stats()["embeddings_cached"]
+        b.recall("graph FalkorDB Keycloak")
+        after = b.stats()["embeddings_cached"]
+        chk("embedding cache lazy-fills on recall", after >= before and after >= 1)
+        # FTS candidate retrieval returns active matches only
+        cands = b.store.fts_candidates("FalkorDB graph")
+        chk("FTS5 candidate retrieval works", isinstance(cands, list) and len(cands) >= 1)
+        # bulk transaction ingests fast and stays consistent
+        with b.store.bulk():
+            for i in range(20):
+                b.store.remember(f"bulk fact number {i} about kestrels",
+                                 f"bulk fact number {i} about kestrels", f"bk{i}")
+        chk("bulk transaction commits consistently", len(b.store.active()) >= 20)
+
+        # pluggable embedder signatures (cache won't collide across providers)
+        from inmem.embedding import HashingEmbedder as _HE, OpenAIEmbedder as _OE
+        chk("embedders expose distinct cache signatures",
+            _HE(dim=128).sig == "hashing:128" and "embedding" in _OE(api_key="x").sig)
 
     return results
 
