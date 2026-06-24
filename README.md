@@ -1,6 +1,6 @@
-# Infinity Neural Memory — V1 Final (1.0.1)
+# Infinity Neural Memory — V1.1 (1.1.0)
 
-![CI](https://img.shields.io/badge/CI-verify%2026%20%2B%2047%20tests-brightgreen)
+![CI](https://img.shields.io/badge/CI-verify%2031%20%2B%2058%20tests-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Deps](https://img.shields.io/badge/dependencies-0%20(stdlib)-success)
@@ -25,6 +25,10 @@ This is the merge of the self-contained engine and the OpenClaw product shell, w
 - **PII scrub** (`inmem.pii`) on top of secret redaction — fixes the seed-corpus leak the lab audit found.
 - **Safe seed importer** (`scripts/seed_import.py`) — bootstrap from a private corpus with PII-scrub + secret-block + dedupe; nothing raw reaches the store.
 - **OpenClaw protocol layer** — `SKILL.md`, `INSTINCT-PROTOCOL.md`, `SYNC-PROTOCOL.md`, `SESSION-LOGGER.md`, `AGENTS-BLOCK.md`.
+- **Scale & semantic recall (V1.1).** FTS5 + a two-stage pipeline (lexical candidates → vector
+  rerank of only those → RRF) + a lazy embedding cache: warm queries ~84x faster than V1.0 and
+  bulk insert faster than before. Swap in `OpenAIEmbedder` / `OllamaEmbedder` for semantic recall
+  (zero new deps; the offline `HashingEmbedder` stays the default).
 - **Optional engine, honest bridge** — bundles `neural-memory 4.12.0` (attributed in `NOTICE.md`), used only via `SubprocessBridge` → `nmem`. The core never imports it; the bridge never fakes a sync.
 
 ---
@@ -51,8 +55,8 @@ This is the merge of the self-contained engine and the OpenClaw product shell, w
 
 ```bash
 pip install -e .            # or: pip install dist/infinity_neural_memory-1.0.0-*.whl
-python VERIFY.py            # 26/26 checks, exit 0 on success
-pytest tests/ -q            # 47 tests
+python VERIFY.py            # 31/31 checks, exit 0 on success
+pytest tests/ -q            # 58 tests
 ```
 
 ## Quickstart (CLI)
