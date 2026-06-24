@@ -1,5 +1,35 @@
 # Changelog
 
+## V1.1.0 — Scale & Semantic recall (2026-06-23)
+
+Closes the retrieval gap flagged by the lab reviews. `python VERIFY.py` → 31/31;
+`pytest` → 58 passing; fresh-install verified. **~84x faster warm queries; ~4x faster bulk insert.**
+
+### Added
+- **FTS5 full-text index** for BM25 candidate retrieval (was: scan every active row). Graceful
+  fallback to in-memory BM25 when FTS5 isn't compiled in (`store.fts_enabled`).
+- **Two-stage hybrid retrieval** — FTS5 top-N candidates → vector rerank of *only* those
+  candidates → RRF. No longer embeds the whole store per query.
+- **Embedding cache** in SQLite (vector + embedder signature). **Lazy by default**: a memory is
+  embedded the first time it appears as a candidate, then cached — so memories that are never
+  recalled are never embedded. `Brain(eager_embed=True)` opts into write-time caching.
+- **Pluggable semantic embedders** (zero new deps, stdlib `urllib`): `OpenAIEmbedder`,
+  `OllamaEmbedder`, plus the default offline `HashingEmbedder`. Pass via `Brain(embedder=...)`.
+  Each exposes `.sig` so the cache invalidates when you switch providers.
+- **Bulk transaction** — `with store.bulk(): ...` defers commits for fast ingestion; the seed
+  importer uses it.
+
+### Performance (5,000 memories, this machine)
+- Bulk insert: **0.32 s** (was ~1.33 s in-memory) · warm hybrid query: **~23 ms** (was ~1960 ms).
+
+### Migration
+- Schema bumps to **v2**. Existing v1 databases are migrated in place (adds embedding columns,
+  creates + backfills the FTS index, bumps the version) — additive and non-destructive.
+
+### Notes
+- The default `HashingEmbedder` is still not semantic-SOTA — set a real embedder for quality.
+  Honesty over hype.
+
 ## V1.0.1 — Patch (2026-06-23) — crown-ready
 
 Applies the P0 fixes from the second lab review (Mula). `python VERIFY.py` → 26/26;
