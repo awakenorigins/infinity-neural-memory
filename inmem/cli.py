@@ -44,6 +44,9 @@ def main(argv: list[str] | None = None) -> int:
 
     pa = sub.add_parser("preaction"); pa.add_argument("--action", required=True); pa.add_argument("--target", default="")
 
+    fg = sub.add_parser("forget"); fg.add_argument("memory_id")
+    fg.add_argument("--reason", default=""); fg.add_argument("--actor", default="cli")
+
     sub.add_parser("digest")
     sub.add_parser("stats")
     sy = sub.add_parser("sync"); sy.add_argument("--real", action="store_true", help="use nmem CLI if installed")
@@ -69,6 +72,11 @@ def main(argv: list[str] | None = None) -> int:
     elif args.cmd == "preaction":
         v = b.pre_action(args.action, args.target)
         print(json.dumps({"proceed": v.proceed, "risk": v.risk, "warnings": v.warnings},
+                         ensure_ascii=False, indent=2))
+    elif args.cmd == "forget":
+        ok = b.forget(args.memory_id, reason=args.reason, actor=args.actor)
+        print(json.dumps({"forgotten": ok, "memory_id": args.memory_id,
+                          "note": "permanent erasure; logged to timeline as a tombstone"},
                          ensure_ascii=False, indent=2))
     elif args.cmd == "digest":
         print(b.digest_text())
