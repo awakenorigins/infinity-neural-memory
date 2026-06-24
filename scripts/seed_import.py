@@ -11,6 +11,7 @@ a private corpus without leaking — the exact gap the lab audit found in the gp
 from __future__ import annotations
 
 import argparse
+from contextlib import nullcontext
 import json
 import re
 import sys
@@ -61,7 +62,10 @@ def run(source: str, db: str, timeline: str, *, check: bool, max_chars: int) -> 
     report = {"files": 0, "chunks": 0, "admitted": 0, "skipped": 0,
               "blocked_secret": 0, "pii_scrubbed": 0, "pii_labels": {}}
     src = Path(source)
-    for f in sorted(src.rglob("*.md")):
+    files = sorted(src.rglob("*.md"))
+    _ctx = brain.store.bulk() if brain is not None else nullcontext()
+    with _ctx:
+      for f in files:
         report["files"] += 1
         raw = f.read_text(encoding="utf-8", errors="ignore")
         for heading, body in _chunks(raw):
