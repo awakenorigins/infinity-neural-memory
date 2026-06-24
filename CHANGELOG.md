@@ -1,5 +1,32 @@
 # Changelog
 
+## V1.2.0 — Permanent by design + deliberate forget (2026-06-23)
+
+Makes the project's founding goal explicit and enforceable: **Infinity Neural Memory keeps every
+memory permanently; the only way one ever leaves is a human-issued, logged `forget`.**
+`python VERIFY.py` → 35/35; `pytest` → 64 passing; fresh-install verified.
+
+### Added
+- **`Brain.forget(id, reason, actor)` / `MemoryStore.forget(id)` / `inmem forget <id>`** — the
+  single, deliberate erasure path (right-to-forget, leaked-secret purge). It permanently removes
+  the memory from the store **and** the FTS index, and appends a **tombstone** to the append-only
+  timeline (`{type:"forget", mem_id, reason, actor}`) so the *act* of forgetting is auditable while
+  the content is gone. Never invoked automatically.
+- **`docs/PERMANENCE.md`** — the precise, auditable contract: the Infinity guarantee, the three
+  pillars (append-only timeline · non-destructive supersession · no expiry), and why persistence is
+  **not** "zero-decay."
+- **Permanence is now a first-class, documented guarantee** in `README.md` and `SKILL.md`, with
+  VERIFY checks proving: supersession/decay never delete, explicit forget removes + logs, and a
+  non-forgotten memory survives.
+
+### Clarified
+- Reframed the old "❌ not zero-decay" note so it cannot be misread as "no permanent memory."
+  Permanence is a **storage** guarantee (nothing auto-deletes); ranking uses freshness/relevance.
+
+### Notes
+- Roadmap item *right-to-forget* (was V1.3) is delivered here. Timeline hash-chain + `inmem rebuild`
+  remain for a later release.
+
 ## V1.1.0 — Scale & Semantic recall (2026-06-23)
 
 Closes the retrieval gap flagged by the lab reviews. `python VERIFY.py` → 31/31;
