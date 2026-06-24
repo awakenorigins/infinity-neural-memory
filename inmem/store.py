@@ -184,6 +184,16 @@ class MemoryStore:
         self.conn.execute("UPDATE memories SET freq = freq + 1 WHERE id=?", (mem_id,))
         self._commit()
 
+    def forget(self, mem_id: str, *, reason: str = "") -> bool:
+        """The ONLY path that removes a memory. Permanent erasure for right-to-forget / removing
+        a leaked secret. It is NEVER called automatically — decay, supersession, and the passage
+        of time never delete anything. Callers should record the act (see Brain.forget)."""
+        cur = self.conn.execute("DELETE FROM memories WHERE id=?", (mem_id,))
+        if self.fts_enabled:
+            self.conn.execute("DELETE FROM mem_fts WHERE mem_id=?", (mem_id,))
+        self._commit()
+        return cur.rowcount > 0
+
     def set_embedding(self, mem_id: str, vec: list, sig: str) -> None:
         self.conn.execute("UPDATE memories SET embedding=?, embedder_sig=? WHERE id=?",
                           (json.dumps(vec), sig, mem_id))
