@@ -1,0 +1,21 @@
+# Proof of run — Wed Jun 24 04:09:20 UTC 2026 | Infinity Neural Memory v1.2.0
+
+## python VERIFY.py
+========================================================
+Result: 35/35 checks passed
+VERDICT: ✅ ALL PASS — Infinity Neural Memory V1
+
+## pytest tests/
+................................................................         [100%]
+
+## Permanence proof: nothing auto-deletes; only explicit forget removes
+  DELETE statements in code: 2 (both inside forget())
+  after supersede attempt -> both rows still exist: True
+  explicit forget removed A: True
+  forget tombstone on timeline: True
+  C still survives (not forgotten): True
+
+## fresh-install 1.2.0 wheel -> VERIFY + pytest
+  installed: 1.2.0
+Result: 35/35 checks passed
+VERDICT: ✅ ALL PASS — Infinity Neural Memory V1
