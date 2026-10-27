@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "infinity-neural-memory"
+version = "1.2.0"
+description = "Infinity Neural Memory V1 Final: append-only timeline, hybrid recall, two governance gates, explainable preference prior, PII+secret redaction, OpenClaw protocol, optional neural-memory engine."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Infinity Neural Memory contributors" }]
+keywords = ["memory", "agents", "openclaw", "retrieval", "rrf", "event-sourced", "vietnamese"]
+dependencies = []  # pure stdlib by design
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "build>=1.0", "pre-commit>=3.0"]
+
+[project.urls]
+Homepage = "https://github.com/NachaFromMars/infinity-neural-memory"
+Repository = "https://github.com/NachaFromMars/infinity-neural-memory"
+Issues = "https://github.com/NachaFromMars/infinity-neural-memory/issues"
+Changelog = "https://github.com/NachaFromMars/infinity-neural-memory/blob/main/CHANGELOG.md"
+
+[project.scripts]
+inmem = "inmem.cli:main"
+
+[tool.setuptools]
+packages = ["inmem"]
+
+[tool.setuptools.package-data]
+inmem = ["py.typed"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"

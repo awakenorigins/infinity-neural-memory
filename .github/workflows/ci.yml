@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  verify-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Verify (single main, exit code is the truth)
+        run: python VERIFY.py
+
+      - name: Unit tests
+        run: pytest tests/ -q
+
+      # Release gate: do not let secrets into the repo. Both audits flagged plaintext keys.
+      - name: Secret scan (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
+
+      - name: Refuse data artifacts in tree
+        run: |
+          if git ls-files | grep -E '\.(db|sqlite)$|^timeline/'; then
+            echo "::error::database or timeline files must not be committed"; exit 1
+          fi

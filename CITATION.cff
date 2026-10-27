@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Infinity Neural Memory"
+version: 1.2.0
+date-released: 2026-06-23
+license: MIT
+abstract: >-
+  A self-contained, honest, testable memory nervous system for long-running agents:
+  append-only event-sourced timeline, hybrid BM25/vector recall with RRF, explainable
+  governance gates (admission + pre-action), secret redaction, and Vietnamese NLP.
+keywords:
+  - agent-memory
+  - event-sourcing
+  - retrieval
+  - rrf
+  - vietnamese-nlp
+authors:
+  - name: "Infinity Neural Memory contributors"

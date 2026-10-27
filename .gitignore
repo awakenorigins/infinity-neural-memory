@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.db
+*.sqlite
+timeline/
+.inmem/
+dist/infinity_neural_memory-*
+build/
+*.egg-info/
+.pytest_cache/
+seed/private/*
+!seed/private/.gitkeep
+seed-import.db
